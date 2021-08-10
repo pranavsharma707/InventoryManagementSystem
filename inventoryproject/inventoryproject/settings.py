@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dashboardapp.apps.DashboardappConfig'
+    'dashboardapp.apps.DashboardappConfig',
+    'user.apps.UserConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +131,12 @@ STATICFILES_DIRS = [
 
 
 STATIC_ROOT = (BASE_DIR+"/asert/")
+
+LOGIN_REDIRECT_URL='dashboard-index' # when login by django admin class afther this we go dashboard-index which os name='dashboard-index in url
+
+LOGIN_URL='user-login' # this page comes every when you access any page without login or authentication
+
+
 
 
 

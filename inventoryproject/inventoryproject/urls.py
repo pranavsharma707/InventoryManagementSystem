@@ -15,8 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from user import views as user_view
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('dashboardapp.urls'))
+    path('',include('dashboardapp.urls')),
+    path('register/',user_view.register,name='user-register'),
+    path('',auth_views.LoginView.as_view(template_name='user/login.html'),name="user-login"),
+    # here we get LoginView Class from view package and make our own template means login.html and 
+    #in this {{form}} means form django-admin
+    path('profile/',user_view.profile,name='user-profile'),
+    path('logout/',auth_views.LogoutView.as_view(template_name='user/logout.html'),name="user-logout")
 ]

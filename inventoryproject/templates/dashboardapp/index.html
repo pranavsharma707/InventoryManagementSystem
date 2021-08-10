@@ -2,6 +2,8 @@
 {% block title %}Home Page{% endblock %}
 
 {%block content%}
+{% if user.is_authenticated and user.is_staff and user.is_superuser%} <!-- means if user is staff in user admin then only it see the graph and chart -->
+ {% include 'partials/topnav.html' %}
 <div class="container">
         <div class="row my-5">
             <div class="col-md-6">
@@ -94,5 +96,8 @@
             </div>
         </div>
     </div>
+    {%else%}
+    {% include 'dashboardapp/staff_index.html'%} <!--when else is executed it shows data from staff_index.html-->
+    {%endif%}
 {%endblock%}
 
