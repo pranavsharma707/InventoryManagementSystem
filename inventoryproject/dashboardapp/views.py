@@ -18,7 +18,20 @@ def staff(request):
 # @login_required(login_url='user-login')
 @login_required
 def product(request):
-    return render(request,'dashboardapp/product.html')
+    items=Product.objects.raw('SELECT * FROM dashboardapp_product')
+    if request.method=='POST':
+        form=ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard-product')
+    else:
+        form=ProductForm()
+
+    context={
+        'items':items,
+        'form':form
+    }
+    return render(request,'dashboardapp/product.html',context)
 
 # @login_required(login_url='user-login')
 @login_required
@@ -28,3 +41,25 @@ def order(request):
         'product':product
     }
     return render(request,'dashboardapp/order.html',context)
+
+
+def product_delete(request,pk):
+    item=Product.objects.get(id=pk)
+    if request.method=='POST':
+        item.delete()
+        return redirect('dashboard-product')
+    return render(request,'dashboardapp/product_delete.html')
+
+def product_update(request,pk):
+    item=Product.objects.get(id=pk)
+    if request.method=='POST':
+        form=ProductForm(request.POST,instance=item)# here fill the data and it is updated
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard-product')
+    else:
+        form=ProductForm(instance=item)# here without based on id data by dafault comes in field based on id means instance=item
+    context={
+        'form':form
+    }
+    return render(request,'dashboardapp/product_update.html',context)
