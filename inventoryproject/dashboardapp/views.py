@@ -2,18 +2,48 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Product
 from django.contrib.auth.decorators import login_required
+from dashboardapp.forms import ProductForm,OrderForm
+from django.contrib.auth.models import User
+from django.contrib import messages
 # @login_required(login_url='user-login') # means without authentication if you go any page then this login page is how
 
 # Create your views here.
 @login_required # this is any way after this in settings.py we have to set LOGIN_URL='user-login'
 def home(request):
-    return render(request,'dashboardapp/index.html')
-
+    orders=Order.objects.all()
+    products=Product.objects.all()
+    if request.method=='POST':
+        form=OrderForm(request.POST)
+        if form.is_valid():
+            instance=form.save(commit=False)
+            instance.staff=request.user
+            instance.save()
+            return redirect('dashboard-index')
+    else:
+        form=OrderForm()
+    context={
+        'orders':orders,
+        'form':form,
+        'products':products
+    }    
+    return render(request,'dashboardapp/index.html',context)
 
 # @login_required(login_url='user-login')
 @login_required
 def staff(request):
-    return render(request,'dashboardapp/staff.html')
+    workers=User.objects.all()
+    context={
+        'workers':workers
+    }
+    return render(request,'dashboardapp/staff.html',context)
+
+@login_required
+def staff_detail(request,pk):
+    workers=User.objects.get(id=pk)
+    context={
+        'workers':workers
+    }
+    return render(request,'dashboardapp/staff_detail.html',context)
 
 # @login_required(login_url='user-login')
 @login_required
@@ -23,6 +53,8 @@ def product(request):
         form=ProductForm(request.POST)
         if form.is_valid():
             form.save()
+            product_name=form.cleaned_data.get('name')
+            messages.success(request,f"{product_name} has added")
             return redirect('dashboard-product')
     else:
         form=ProductForm()
@@ -36,13 +68,13 @@ def product(request):
 # @login_required(login_url='user-login')
 @login_required
 def order(request):
-    product=Product.objects.all()
+    orders=Order.objects.all()
     context={
-        'product':product
+        'orders':orders
     }
     return render(request,'dashboardapp/order.html',context)
 
-
+@login_required
 def product_delete(request,pk):
     item=Product.objects.get(id=pk)
     if request.method=='POST':
@@ -50,6 +82,7 @@ def product_delete(request,pk):
         return redirect('dashboard-product')
     return render(request,'dashboardapp/product_delete.html')
 
+@login_required
 def product_update(request,pk):
     item=Product.objects.get(id=pk)
     if request.method=='POST':
