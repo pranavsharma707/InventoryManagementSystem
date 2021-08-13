@@ -137,6 +137,14 @@ LOGIN_REDIRECT_URL='dashboard-index' # when login by django admin class afther t
 LOGIN_URL='user-login' # this page comes every when you access any page without login or authentication
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'javashrm@gmail.com'
+EMAIL_HOST_PASSWORD = 'corejava@1234'
+EMAIL_USE_TLS = True
+
+
 
 
 

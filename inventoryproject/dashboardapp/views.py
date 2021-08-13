@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from .models import Product
+from .models import Product,Order
 from django.contrib.auth.decorators import login_required
 from dashboardapp.forms import ProductForm,OrderForm
 from django.contrib.auth.models import User
@@ -12,6 +12,9 @@ from django.contrib import messages
 def home(request):
     orders=Order.objects.all()
     products=Product.objects.all()
+    workers_count=User.objects.all().count()
+    orders_count=Order.objects.all().count()
+    products_count=Product.objects.all().count()
     if request.method=='POST':
         form=OrderForm(request.POST)
         if form.is_valid():
@@ -24,7 +27,10 @@ def home(request):
     context={
         'orders':orders,
         'form':form,
-        'products':products
+        'products':products,
+        'workers_count':workers_count,
+        'products_count':products_count,
+        'orders_count':orders_count
     }    
     return render(request,'dashboardapp/index.html',context)
 
@@ -32,16 +38,30 @@ def home(request):
 @login_required
 def staff(request):
     workers=User.objects.all()
+    workers_count=workers.count()
+    products_count=Product.objects.all().count()
+    orders_count=Order.objects.all().count()
+    
     context={
-        'workers':workers
+        'workers':workers,
+        'workers_count':workers_count,
+        'products_count':products_count,
+        'orders_count':orders_count
     }
     return render(request,'dashboardapp/staff.html',context)
 
 @login_required
 def staff_detail(request,pk):
     workers=User.objects.get(id=pk)
+    workers_count=workers.count()
+    products_count=Product.objects.all().count()
+    orders_count=Order.objects.all().count()
+    
     context={
-        'workers':workers
+        'workers':workers,
+        'workers_count':workers_count,
+        'products_count':products_count,
+        'orders_count':orders_count
     }
     return render(request,'dashboardapp/staff_detail.html',context)
 
@@ -49,6 +69,11 @@ def staff_detail(request,pk):
 @login_required
 def product(request):
     items=Product.objects.raw('SELECT * FROM dashboardapp_product')
+    workers=User.objects.all()
+    workers_count=workers.count()
+    products_count=Product.objects.all().count()
+    orders_count=Order.objects.all().count()
+    
     if request.method=='POST':
         form=ProductForm(request.POST)
         if form.is_valid():
@@ -61,7 +86,10 @@ def product(request):
 
     context={
         'items':items,
-        'form':form
+        'form':form,
+        'workers_count':workers_count,
+        'products_count':products_count,
+        'orders_count':orders_count
     }
     return render(request,'dashboardapp/product.html',context)
 
@@ -69,8 +97,15 @@ def product(request):
 @login_required
 def order(request):
     orders=Order.objects.all()
+    workers_count=workers.count()
+    products_count=Product.objects.all().count()
+    orders_count=Order.objects.all().count()
+    
     context={
-        'orders':orders
+        'orders':orders,
+        'workers_count':workers_count,
+        'products_count':products_count,
+        'orders_count':orders_count
     }
     return render(request,'dashboardapp/order.html',context)
 
