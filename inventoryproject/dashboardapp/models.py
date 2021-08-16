@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 
 # Create your models here.
 CATEGORY=[
@@ -15,6 +17,19 @@ class Product(models.Model):
 
     def __str__(self):
         return f'{self.name}-{self.quantity}'
+
+@receiver(post_save,sender=Product)
+def total(sender,instance,created,**kwargs):
+    product=Product.objects.get(id=instance.id)
+    if created:
+        instance.total_price=product.quantity*product.price    
+        instance.save()
+    else:#if you want to update field
+        total_price=product.quantity*product.price 
+        product=Product.objects.filter(id=instance.id).update(total_price=total_price)
+        
+post_save.connect(total,sender=Product)
+
 
 class Order(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)

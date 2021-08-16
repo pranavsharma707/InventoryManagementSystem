@@ -15,6 +15,11 @@ def home(request):
     workers_count=User.objects.all().count()
     orders_count=Order.objects.all().count()
     products_count=Product.objects.all().count()
+
+    sum=0
+    for data in products:
+        sum=sum+data.total_price
+
     if request.method=='POST':
         form=OrderForm(request.POST)
         if form.is_valid():
@@ -25,6 +30,7 @@ def home(request):
     else:
         form=OrderForm()
     context={
+        'total_price_products':sum,
         'orders':orders,
         'form':form,
         'products':products,
@@ -41,8 +47,13 @@ def staff(request):
     workers_count=workers.count()
     products_count=Product.objects.all().count()
     orders_count=Order.objects.all().count()
+    product_data=Product.objects.all()
+    sum=0
+    for data in product_data:
+        sum=sum+data.total_price
     
     context={
+        'total_price_products':sum,
         'workers':workers,
         'workers_count':workers_count,
         'products_count':products_count,
@@ -73,6 +84,10 @@ def product(request):
     workers_count=workers.count()
     products_count=Product.objects.all().count()
     orders_count=Order.objects.all().count()
+
+    sum=0
+    for data in items:
+        sum=sum+data.total_price
     
     if request.method=='POST':
         form=ProductForm(request.POST)
@@ -85,6 +100,7 @@ def product(request):
         form=ProductForm()
 
     context={
+        'total_price_products':sum,
         'items':items,
         'form':form,
         'workers_count':workers_count,
@@ -100,8 +116,13 @@ def order(request):
     workers_count=workers.count()
     products_count=Product.objects.all().count()
     orders_count=Order.objects.all().count()
+    product_data=Product.objects.all()
+    sum=0
+    for data in product_data:
+        sum=sum+data.total_price
     
     context={
+        'total_price_products':sum,
         'orders':orders,
         'workers_count':workers_count,
         'products_count':products_count,
