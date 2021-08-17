@@ -16,6 +16,18 @@ def home(request):
     orders_count=Order.objects.all().count()
     products_count=Product.objects.all().count()
 
+    order=Order.objects.filter(staff=request.user)
+    orders=[]
+    for data in order:
+        dict={}
+        dict['product']=data.product.name
+        dict['category']=data.product.category
+        dict['order_quantity']=data.order_quantity
+        dict['price']=data.product.price
+        dict['total']=data.order_quantity*data.product.price
+        dict['date']=data.date
+        orders.append(dict)
+
     sum=0
     for data in products:
         sum=sum+data.total_price
@@ -25,8 +37,23 @@ def home(request):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.staff=request.user
-            instance.save()
-            return redirect('dashboard-index')
+            product_id=request.POST['product']
+            order_quantity=request.POST['order_quantity']
+            product_quantity=Product.objects.get(id=product_id)
+            if product_quantity.quantity==0:
+                messages.success(request,f'{product_quantity.name} Product out of stock')
+                return redirect('dashboard-index')
+            elif product_quantity.quantity < int(order_quantity) or int(order_quantity)==0:
+                                print(order_quantity,'order quantity')
+                                messages.success(request,f'Please enter the quantity of {product_quantity.name} in range of stock')
+                                return redirect('dashboard-index')
+            else:
+              product_quantity.quantity=product_quantity.quantity-int(order_quantity)
+              product_quantity.save()
+              instance.save()
+              return redirect('dashboard-index')
+           
+            
     else:
         form=OrderForm()
     context={

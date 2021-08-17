@@ -1,13 +1,22 @@
+{%load crispy_forms_tags%}
 <div class='container'>
     <div class="row mt-4">
         <div class="col-md-4">
+        {%for message in messages%}
+            {%if message%}
+            <div class="alert alert-{{message.tags}}">
+            {{message}}
+            </div>
+            {%endif%}
+            {%endfor%}
             <div class="card">
                 <div class="card-header">
                     Make Request
                 </div>
                 <div class="card-body">
                     <form method="POST">
-                        
+                    {%csrf_token%}
+                    {{form|crispy}}
                         <input class="btn btn-info btn-block" type="submit" value="Make Request">
                     </form>
                 </div>
@@ -19,37 +28,36 @@
                     Orders Records
                 </div>
                 <div class="card-body">
+            
                     <table class="table bg-white">
                         <thead class="bg-info text-white">
                             <tr>
                                 <th scope="col">Product</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                 <th scope="col">Total</th>
+                                 <th scope="col">Date</th>
+                                 <th scope="col">Activity</th>
+                                
+                                
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            {%for order in orders%}
+                            {% comment %} {% if order.staff == user %} <!--here user means which user currently login --> {% endcomment %}
                             <tr>
-                                <td>Book</td>
-                                <td>Stationary</td>
-                                <td>10</td>
+                                <td>{{order.product}}</td>
+                                <td>{{order.category}}</td>
+                                <td>{{order.order_quantity}}</td>
+                                <td>{{order.price}}</td>
+
+                                <td>{{order.total}}</td>
+                                <td>{{order.date}}</td>
+                                
                             </tr>
-							<tr>
-                                <td>Book</td>
-                                <td>Stationary</td>
-                                <td>10</td>
-                            </tr>
-							<tr>
-                                <td>Book</td>
-                                <td>Stationary</td>
-                                <td>10</td>
-                            </tr>
-							<tr>
-                                <td>Book</td>
-                                <td>Stationary</td>
-                                <td>10</td>
-                            </tr>
-                            
+                            {% comment %} {%endif%} {% endcomment %}
+                            {%endfor%}
                         </tbody>
                     </table>
                 </div>
