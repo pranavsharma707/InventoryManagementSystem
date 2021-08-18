@@ -42,3 +42,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.product} ordered by {self.staff.username}"
+
+class FileUpload(models.Model):
+    file_upload=models.FileField(upload_to='documents')
